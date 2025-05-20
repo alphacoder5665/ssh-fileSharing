@@ -199,16 +199,26 @@ case $choice in
 1)
     ask_data # 🔄 Ask for all info
     echo ""
-    echo "It asks for password. If you know it, proceed. If not, reset using 'passwd' in terminal."
-    echo ""
-    scp -P "$portNumber" "$username@$ipAddress:$filePath" "$folderPath" # 🚚 Copy file from server to client
+    printf "\nIt asks for password. If you know it, proceed. If not, reset using 'passwd' in terminal.\n"
+    read -p "Do you want to 'share folders' from server to client? (y/n): " save_fchoice
+    if [[ "$save_fchoice" =~ ^[Yy]$ ]]; then
+         scp -r -P "$portNumber" "$username@$ipAddress:$filePath" "$folderPath" # 🚚 Copy folder from server to client
+    else
+    	echo ""
+    	scp -P "$portNumber" "$username@$ipAddress:$filePath" "$folderPath" # 🚚 Copy file from server to client
+    fi
     ;;
 2)
     ask_data # 🔄 Ask for all info
     echo ""
-    echo "It asks for password. If you know it, proceed. If not, reset using 'passwd' in terminal."
-    echo ""
-    scp -P "$portNumber" "$filePath" "$username@$ipAddress:$folderPath" # 🚚 Copy file from client to server
+    printf "\nIt asks for password. If you know it, proceed. If not, reset using 'passwd' in terminal.\n"
+    read -p "Do you want to 'share folders' from server to client? (y/n): " save_fchoice
+    if [[ "$save_fchoice" =~ ^[Yy]$ ]]; then
+         scp -r -P "$portNumber" "$filePath" "$username@$ipAddress:$folderPath" # 🚚 Copy folder from client to server
+    else
+        echo ""
+        scp -P "$portNumber" "$filePath" "$username@$ipAddress:$folderPath" # 🚚 Copy file from client to server
+    fi
     ;;
 3)
     load_user_details # 🔁 Load credentials
@@ -224,12 +234,24 @@ case $choice in
 
         case $copy_direction_choice in
         1)
-            echo "Copying from server to client..."
-            scp -P "$portNumber" "$username@$ipAddress:$filePath" "$folderPath"
+            printf "\nIt asks for password. If you know it, proceed. If not, reset using 'passwd' in terminal.\n"
+    	    read -p "Do you want to 'share folders' from server to client? (y/n): " save_fchoice
+    	    if [[ "$save_fchoice" =~ ^[Yy]$ ]]; then
+         	scp -r -P "$portNumber" "$username@$ipAddress:$filePath" "$folderPath" # 🚚 Copy folder from server to client
+            else
+        	echo ""
+        	scp -P "$portNumber" "$username@$ipAddress:$filePath" "$folderPath" # 🚚 Copy file from server to client
+    	    fi
             ;;
         2)
-            echo "Copying from client to server..."
-            scp -P "$portNumber" "$filePath" "$username@$ipAddress:$folderPath"
+            printf "\nIt asks for password. If you know it, proceed. If not, reset using 'passwd' in terminal.\n"
+            read -p "Do you want to 'share folders' from server to client? (y/n): " save_fchoice
+    	    if [[ "$save_fchoice" =~ ^[Yy]$ ]]; then
+         	scp -r -P "$portNumber" "$filePath" "$username@$ipAddress:$folderPath" # 🚚 Copy folder from client to server
+    	    else
+        	echo ""
+        	scp -P "$portNumber" "$filePath" "$username@$ipAddress:$folderPath" # 🚚 Copy file from client to server
+    	    fi
             ;;
         *)
             echo "Invalid direction choice. Aborting copy."

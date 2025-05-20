@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting to Termux via SSH</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+        pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        h3 { margin-top: 20px; }
+        ul { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <h2>How to Connect to Termux via SSH from Another Device</h2>
+
+    <p>This guide assumes you have already successfully set up the SSH server (<code>sshd</code>) within Termux on your Android device.</p>
+
+    <h3>ON THE TERMUX (ANDROID) DEVICE FIRST (Recap):</h3>
+    <ol>
+        <li><strong>Install OpenSSH (if not done):</strong>
+            <pre><code>pkg update
+pkg install openssh</code></pre>
+        </li>
+        <li><strong>Set a Password for Termux (if not done):</strong>
+            <pre><code>passwd</code></pre>
+            (Enter and confirm your new password)
+        </li>
+        <li><strong>Start the SSH Server (<code>sshd</code>):</strong>
+            <pre><code>sshd</code></pre>
+            (Termux SSH server usually runs on port <code>8022</code>)
+        </li>
+        <li><strong>Find Termux's IP Address and Username:</strong>
+            <ul>
+                <li><strong>IP Address:</strong> Check your Android Wi-Fi settings for the IP address (e.g., <code>192.168.x.x</code>). Or in Termux, try:
+                    <pre><code>ifconfig</code></pre>
+                    (Look for <code>inet</code> under <code>wlan0</code> or similar)
+                </li>
+                <li><strong>Username:</strong> In Termux, run:
+                    <pre><code>whoami</code></pre>
+                    (Usually something like <code>u0_aXXX</code>)
+                </li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>FROM THE OTHER DEVICE (e.g., Laptop, PC, another mobile on the SAME Wi-Fi):</h3>
+
+    <h4>1. Connecting from a Linux or macOS Computer (Terminal):</h4>
+    <ul>
+        <li>Open your terminal.</li>
+        <li>Command:
+            <pre><code>ssh &lt;your_termux_username&gt;@&lt;your_android_device_ip&gt; -p 8022</code></pre>
+            Example:
+            <pre><code>ssh u0_a123@192.168.1.5 -p 8022</code></pre>
+        </li>
+        <li>If prompted about host authenticity, type <code>yes</code>.</li>
+        <li>Enter the Termux password when prompted.</li>
+    </ul>
+
+    <h4>2. Connecting from a Windows Computer:</h4>
+    <ul>
+        <li><strong>Using PowerShell (Windows 10+):</strong>
+            <ul>
+                <li>Open PowerShell.</li>
+                <li>Command:
+                    <pre><code>ssh &lt;your_termux_username&gt;@&lt;your_android_device_ip&gt; -p 8022</code></pre>
+                    Example:
+                    <pre><code>ssh u0_a123@192.168.1.5 -p 8022</code></pre>
+                </li>
+                <li>Follow prompts for host authenticity and password.</li>
+            </ul>
+        </li>
+        <li><strong>Using PuTTY:</strong>
+            <ul>
+                <li>Download and open PuTTY.</li>
+                <li>Host Name (or IP address): <code>&lt;your_android_device_ip&gt;</code></li>
+                <li>Port: <code>8022</code></li>
+                <li>Connection type: SSH</li>
+                <li>Click "Open".</li>
+                <li>Accept security alert if it appears.</li>
+                <li>Login as: <code>&lt;your_termux_username&gt;</code></li>
+                <li>Enter Termux password.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h4>3. Connecting from Another Android or iOS Device:</h4>
+    <ul>
+        <li>Install an SSH client app (e.g., JuiceSSH, Termius, ConnectBot for Android; Termius, Blink Shell for iOS).</li>
+        <li>In the app, create a new connection:
+            <ul>
+                <li>Hostname/Address: <code>&lt;your_android_device_ip&gt;</code></li>
+                <li>Port: <code>8022</code></li>
+                <li>Username: <code>&lt;your_termux_username&gt;</code></li>
+                <li>Password: (Enter Termux password)</li>
+            </ul>
+        </li>
+        <li>Connect.</li>
+    </ul>
+
+    <h3>Ending the SSH Session (from the Client Device)</h3>
+    <ul>
+        <li><strong>Type <code>exit</code>:</strong> In the SSH terminal connected to Termux, type <code>exit</code> and press Enter.
+            <pre><code>exit</code></pre>
+        </li>
+        <li><strong>Close the Terminal/Client:</strong> You can usually close the terminal window or the SSH client application.</li>
+        <li><strong>SSH Escape Sequence (if stuck):</strong> Press <code>~</code> then <code>.</code>, then Enter (tilde usually needs to be on a new line).</li>
+    </ul>
+
+
+    <h3>Troubleshooting Tips:</h3>
+    <ul>
+        <li><strong>"Connection refused":</strong>
+            <ul>
+                <li>Ensure <code>sshd</code> is running in Termux (<code>ps aux | grep sshd</code>). If not, start with <code>sshd</code>.</li>
+                <li>Verify IP address and port (<code>8022</code>).</li>
+                <li>Ensure both devices are on the same Wi-Fi.</li>
+                <li>Check for firewalls.</li>
+            </ul>
+        </li>
+        <li><strong>"Permission denied" / wrong password:</strong>
+            <ul>
+                <li>Verify correct username and password (case-sensitive).</li>
+            </ul>
+        </li>
+        <li><strong>Termux going to sleep:</strong>
+            <ul>
+                <li>In Termux, run: <code>termux-wake-lock</code></li>
+                <li>Set Termux battery optimization to "Unrestricted" in Android settings.</li>
+                <li>To release lock later: <code>termux-wake-unlock</code></li>
+            </ul>
+        </li>
+    </ul>
+
+</body>
+</html>
